@@ -4,9 +4,10 @@ import dotenv
 import json
 
 TELEGRAM_TOKEN = dotenv.get_key('.env', 'TELEGRAM_TOKEN')
+usrid = dotenv.get_key('.env', 'USRID')
 
 url = "wss://profile.intra.42.fr/cable"
-cookie = "intra=v2; user.id=MTU1Nzc3--a330df6d8483a177fae18bb1b6bdf945158e7d18; locale=en"
+cookie = f"intra=v2; user.id={usrid}; locale=en"
 header = {
 	"Cookie": cookie
 }
@@ -34,7 +35,6 @@ while True:
 			continue
 		if "message" in formatted_result and "location" in formatted_result["message"] and "campus_id" in formatted_result["message"]["location"]:
 			if (formatted_result["message"]["location"]["campus_id"] == 16):
-				# sendToTelegran(formatted_result["message"]["location"]["host"] + " changed in Khouribga campus", 5223066980)
 				if (formatted_result["message"]["location"]["host"].find("e3") != -1):
 					msg = "New spot in Khouribga campus: " + formatted_result["message"]["location"]["host"]
 					sendToTelegran(msg, 5223066980)
@@ -42,4 +42,3 @@ while True:
 					sendToTelegran(msg, 5223066980)
 	except Exception as e:
 		print(e)
-# ws.close()
