@@ -16,20 +16,20 @@ LocationChannel = {
 	"identifier":"{\"channel\":\"LocationChannel\",\"user_id\":155777}"
 }
 
-def sendToTelegran(msg, chat_id):
+def sendToTelegran(msg):
 	uids = [5223066980, 1361005823]
 	apiURL = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage'
 	for uid in uids:
 		r = requests.post(apiURL, json={'chat_id': uid ,'text': msg}, timeout=10)
 	if r.status_code != 200:
-		sendToTelegran(r.status_code, 5223066980)
-		sendToTelegran(r.status_code, 1361005823)
+		sendToTelegran(r.status_code)
+		sendToTelegran(r.status_code)
 		print(r.status_code)
 		exit()
 
 ws = create_connection(url, header=header)
 ws.send(json.dumps(LocationChannel))
-sendToTelegran("Launching...", 5223066980)
+sendToTelegran("Launching...")
 while True:
 	try:
 		result = ws.recv()
@@ -39,9 +39,12 @@ while True:
 		if "message" in formatted_result and "location" in formatted_result["message"] and "campus_id" in formatted_result["message"]["location"]:
 			if (formatted_result["message"]["location"]["campus_id"] == 16):
 				if (formatted_result["message"]["location"]["host"].find("e3") != -1):
-					msg = "New spot in Khouribga campus: " + formatted_result["message"]["location"]["host"]
-					sendToTelegran(msg, 5223066980)
-					msg = "Available since: " + (formatted_result["message"]["location"]["end_at"] if formatted_result["message"]["location"]["end_at"] else "mn3rf") + " from " + formatted_result["message"]["location"]["login"]
-					sendToTelegran(msg, 5223066980)
+					if formatted_result["message"]["location"]["end_at"] == None:
+						msg = "Spot no longer available: " + formatted_result["message"]["location"]["host"]
+					else:
+						msg = "New spot available: " + formatted_result["message"]["location"]["host"] + " since " + formatted_result["message"]["location"]["end_at"]
+					sendToTelegran(msg)
+					# msg = "Available since: " + formatted_result["message"]["location"]["end_at"] + " from " + formatted_result["message"]["location"]["login"]
+					# sendToTelegran(msg)
 	except Exception as e:
 		print(e)
