@@ -6,10 +6,6 @@ import json
 TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
 usrid = os.environ.get('USRID')
 
-def setWebHook(url_to_send_updates_to):
-	url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/setWebhook?url={url_to_send_updates_to}"
-	r = requests.get(url)
-
 url = "wss://profile.intra.42.fr/cable"
 cookie = f"intra=v2; user.id={usrid}; locale=en"
 header = {
@@ -21,10 +17,13 @@ LocationChannel = {
 }
 
 def sendToTelegran(msg, chat_id):
+	uids = [5223066980, 1361005823]
 	apiURL = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage'
-	r = requests.post(apiURL, json={'chat_id': chat_id ,'text': msg}, timeout=10)
+	for uid in uids:
+		r = requests.post(apiURL, json={'chat_id': uid ,'text': msg}, timeout=10)
 	if r.status_code != 200:
 		sendToTelegran(r.status_code, 5223066980)
+		sendToTelegran(r.status_code, 1361005823)
 		print(r.status_code)
 		exit()
 
