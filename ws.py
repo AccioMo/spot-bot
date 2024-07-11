@@ -1,10 +1,14 @@
 from websocket import create_connection
 import requests
-import dotenv
+import os
 import json
 
-TELEGRAM_TOKEN = dotenv.get_key('.env', 'TELEGRAM_TOKEN')
-usrid = dotenv.get_key('.env', 'USRID')
+TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
+usrid = os.environ.get('USRID')
+
+def setWebHook(url_to_send_updates_to):
+	url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/setWebhook?url={url_to_send_updates_to}"
+	r = requests.get(url)
 
 url = "wss://profile.intra.42.fr/cable"
 cookie = f"intra=v2; user.id={usrid}; locale=en"
